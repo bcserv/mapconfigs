@@ -78,16 +78,16 @@ public ExecuteMapSpecificConfigs() {
 	
 	decl String:currentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(currentMap, sizeof(currentMap));
-	new mapSepPos = FindCharInString(currentMap,'/',true);
+
+	new mapSepPos = FindCharInString(currentMap, '/', true);
 	if (mapSepPos != -1) {
 		strcopy(currentMap, sizeof(currentMap), currentMap[mapSepPos+1]);
 	}
+
 	LogMessage("Searching specific configs for %s", currentMap);
-	
-	new Handle:adt_configs;
-	
-	adt_configs = CreateArray(PLATFORM_MAX_PATH);
-	
+
+	new Handle:adt_configs = CreateArray(PLATFORM_MAX_PATH);
+
 	decl String:cfgdir[PLATFORM_MAX_PATH];
 	
 	Format(cfgdir, sizeof(cfgdir), "cfg/%s", CONFIG_DIR);
