@@ -5,7 +5,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION "1.1.1"
+#define PLUGIN_VERSION "1.2"
 
 #define CONFIG_DIR "sourcemod/map-cfg/"
 
@@ -76,8 +76,13 @@ public OnAutoConfigsBuffered() {
 
 public ExecuteMapSpecificConfigs() {
 	
-	decl String:currentMap[64];
-	GetCurrentMap(currentMap, 64);
+	decl String:currentMap[PLATFORM_MAX_PATH];
+	GetCurrentMap(currentMap, sizeof(currentMap));
+	new mapSepPos = FindCharInString(currentMap,'/',true);
+	if (mapSepPos != -1) {
+		strcopy(currentMap, sizeof(currentMap), currentMap[mapSepPos+1]);
+	}
+	LogMessage("Searching specific configs for %s", currentMap);
 	
 	new Handle:adt_configs;
 	
