@@ -5,7 +5,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION "1.1.1"
+#define PLUGIN_VERSION "1.2"
 
 #define CONFIG_DIR "sourcemod/map-cfg/"
 
