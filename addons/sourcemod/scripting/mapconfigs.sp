@@ -131,6 +131,7 @@ public ExecuteMapSpecificConfigs() {
 	}
 	
 	CloseHandle(dir);
+	CloseHandle(adt_configs);
 	
 	return;
 }
