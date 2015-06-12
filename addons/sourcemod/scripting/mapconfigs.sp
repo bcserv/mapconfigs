@@ -1,11 +1,15 @@
-
-// enforce semicolons after each code statement
-#pragma semicolon 1
+/*
+	12.06.2015 Updated to 1.3a for Sourcemod 1.7.2 by Nerus.
+*/
 
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION "1.3"
+// enforce semicolons after each code statement
+#pragma semicolon 1
+#pragma newdecls required
+
+#define PLUGIN_VERSION "1.3a"
 
 #define CONFIG_DIR "sourcemod/map-cfg/"
 
@@ -19,9 +23,9 @@
 
 *****************************************************************/
 
-public Plugin:myinfo = {
+public Plugin myinfo = {
 	name = "Map configs",
-	author = "Berni",
+	author = "Berni updated by Nerus",
 	description = "Map specific configs execution with prefix support",
 	version = PLUGIN_VERSION,
 	url = "http://forums.alliedmods.net/showthread.php?p=607079"
@@ -38,7 +42,7 @@ public Plugin:myinfo = {
 *****************************************************************/
 
 // ConVar Handles
-new Handle:mc_version = INVALID_HANDLE;
+Handle mc_version = INVALID_HANDLE;
 
 // Misc
 
@@ -52,7 +56,7 @@ new Handle:mc_version = INVALID_HANDLE;
 
 *****************************************************************/
 
-public OnPluginStart() {
+public void OnPluginStart() {
 	
 	// ConVars
 	mc_version = CreateConVar("mc_version", PLUGIN_VERSION, "Map Configs plugin version", FCVAR_DONTRECORD|FCVAR_PLUGIN|FCVAR_NOTIFY);
@@ -60,7 +64,7 @@ public OnPluginStart() {
 	SetConVarString(mc_version, PLUGIN_VERSION);
 }
 
-public OnAutoConfigsBuffered() {
+public void OnAutoConfigsBuffered() {
 	ExecuteMapSpecificConfigs();
 }
 
@@ -74,25 +78,25 @@ public OnAutoConfigsBuffered() {
 
 *****************************************************************/
 
-public ExecuteMapSpecificConfigs() {
+public void ExecuteMapSpecificConfigs() {
 	
-	decl String:currentMap[PLATFORM_MAX_PATH];
+	char currentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(currentMap, sizeof(currentMap));
 
-	new mapSepPos = FindCharInString(currentMap, '/', true);
+	int mapSepPos = FindCharInString(currentMap, '/', true);
 	if (mapSepPos != -1) {
 		strcopy(currentMap, sizeof(currentMap), currentMap[mapSepPos+1]);
 	}
 
 	LogMessage("Searching specific configs for %s", currentMap);
 
-	new Handle:adt_configs = CreateArray(PLATFORM_MAX_PATH);
+	Handle adt_configs = CreateArray(PLATFORM_MAX_PATH);
 
-	decl String:cfgdir[PLATFORM_MAX_PATH];
+	char cfgdir[PLATFORM_MAX_PATH];
 	
 	Format(cfgdir, sizeof(cfgdir), "cfg/%s", CONFIG_DIR);
 	
-	new Handle:dir = OpenDirectory(cfgdir);
+	Handle dir = OpenDirectory(cfgdir);
 	
 	if (dir == INVALID_HANDLE) {
 		
@@ -100,9 +104,9 @@ public ExecuteMapSpecificConfigs() {
 		return;
 	}
 	
-	decl String:configFile[PLATFORM_MAX_PATH];
-	decl String:explode[2][64];
-	new FileType:fileType;
+	char configFile[PLATFORM_MAX_PATH];
+	char explode[2][64];
+	FileType fileType;
 	
 	while (ReadDirEntry(dir, configFile, sizeof(configFile), fileType)) {
 		if (fileType == FileType_File) {
@@ -120,9 +124,9 @@ public ExecuteMapSpecificConfigs() {
 	
 	SortADTArray(adt_configs, Sort_Ascending, Sort_String);
 	
-	new size = GetArraySize(adt_configs);
+	int size = GetArraySize(adt_configs);
 	
-	for (new i=0; i<size; ++i) {
+	for (int i=0; i<size; ++i) {
 		GetArrayString(adt_configs, i, configFile, sizeof(configFile));
 		
 		LogMessage("Executing map specific config: %s", configFile);
